@@ -1,16 +1,18 @@
 <?php
     session_start();
-    include_once 'addEdit.php';
-    include_once 'formItem.php';
+    require_once 'addEdit.php';
+    require_once 'formItem.php';
     bounceToLogin();
     
-    $editSessionPage = new EditPage("Edit Session", "Please update session information as needed",
-                                    "sessions", "session_id");
+    $editSessionPage = new EditPage(
+        "Edit Session", "Please update session information as needed",
+        "sessions", "session_id"
+    );
     $editSessionPage->addColumn("name");
     
     $editSessionPage->handleSubmit();
     
-    $nameField = new FormItemSingleTextField("Session Name", TRUE, "name", 0);
+    $nameField = new FormItemSingleTextField("Session Name", true, "name", 0);
     $nameField->setInputType("text");
     $nameField->setInputClass("element text medium");
     $nameField->setInputMaxLength(255);

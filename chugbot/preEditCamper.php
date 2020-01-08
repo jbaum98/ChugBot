@@ -1,7 +1,7 @@
 <?php
     session_start();
-    include_once 'dbConn.php';
-    include_once 'functions.php';
+    require_once 'dbConn.php';
+    require_once 'functions.php';
 
     $thisPageUrl = urlIfy("preEditCamper.php");
     $editPageUrl = urlIfy("editCamper.php");
@@ -12,12 +12,14 @@
     $camperId2Name = array();
     $camperId2Edah = array();
     $edahId2Name = array();
-    $camperIdToEdit = NULL;
-    $camperNameToEdit = NULL;
-    $nextPage = NULL;
+    $camperIdToEdit = null;
+    $camperNameToEdit = null;
+    $nextPage = null;
     
-    fillId2Name(NULL, $edahId2Name, $dbErr,
-                "edah_id", "edot");
+    fillId2Name(
+        null, $edahId2Name, $dbErr,
+        "edah_id", "edot"
+    );
     
     if ($_SERVER["REQUEST_METHOD"] == "GET") {
         $email = test_input($_GET["email"]); // Email search is currently not displayed, but we support it here.
@@ -28,24 +30,26 @@
         $camperIdToEdit = test_input($_GET["camper_id"]);
         
         // Sanity checks.
-        if (! empty($email) &&
-            filter_var($email, FILTER_VALIDATE_EMAIL) === FALSE) {
+        if (! empty($email) 
+            && filter_var($email, FILTER_VALIDATE_EMAIL) === false
+        ) {
             $emailErr = errorString("\"$email\" is not a valid email address.");
         }
-        if (empty($email) && empty($first) && empty($last) && empty($edah_id) &&
-            empty($camperIdToEdit)) {
+        if (empty($email) && empty($first) && empty($last) && empty($edah_id) 
+            && empty($camperIdToEdit)
+        ) {
             $notEnoughInputError = "Please choose at least one search term.";
         }
         
         if (empty($emailErr) && empty($notEnoughInputError)) {
             $db = new DbConn();
-            $db->isSelect = TRUE;
+            $db->isSelect = true;
             $db->addSelectColumn("camper_id");
             $db->addSelectColumn("first");
             $db->addSelectColumn("last");
             $db->addSelectColumn("edah_id");
             // Search by whichever terms we were given.
-            $orderBy = NULL;
+            $orderBy = null;
             if (! empty($email)) {
                 $db->addWhereColumn("email", $email, 's');
             }
@@ -67,10 +71,10 @@
                 $db->addOrderByClause($orderBy);
             }
             $result = $db->simpleSelectFromTable("campers", $dbErr);
-            if ($result == FALSE) {
+            if ($result == false) {
                 error_log(dbErrorString($sql, $dbErr));
             } else {
-                $first = NULL;
+                $first = null;
                 while ($row = mysqli_fetch_assoc($result)) {
                     $camperId2Name[$row["camper_id"]] = $row["last"] . ", " . $row["first"];
                     $camperId2Edah[$row["camper_id"]] = $edahId2Name[$row["edah_id"]];
@@ -98,7 +102,7 @@
     }
   
     echo headerText("Choose Edit");
-?>
+    ?>
 
 
 
@@ -106,18 +110,22 @@
     // If the email was invalid, display an error and "hit back button".  If no rows, report that no campers matched
     // and offer an Add link.
     $camperHomeUrl = urlIfy("camperHome.php");
-    $errText = genFatalErrorReport(array($dbErr, $emailErr, $notEnoughInputError),
-                                   FALSE,
-                                   $camperHomeUrl);
+    $errText = genFatalErrorReport(
+        array($dbErr, $emailErr, $notEnoughInputError),
+        false,
+        $camperHomeUrl
+    );
     if (! is_null($errText)) {
         echo $errText;
         exit();
     }
     if (count($camperId2Name) == 0) {
         $errText = "No campers were found - please try again. Tip: you only need to enter one term - the system will find all matches.";
-        echo genFatalErrorReport(array($errText),
-                                 FALSE,
-                                 $camperHomeUrl);
+        echo genFatalErrorReport(
+            array($errText),
+            false,
+            $camperHomeUrl
+        );
         exit();
     }
     
@@ -151,8 +159,9 @@
     echo "<li>";
     echo "<h3>Welcome, $camperNameToEdit!</h3>";
     echo "<p>You can update your personal data, or go directly to the chug ranking page - please choose one.</p>";
-    if ($nextPage === NULL ||
-        $nextPage == 1) {
+    if ($nextPage === null 
+        || $nextPage == 1
+    ) {
         echo "<input type=\"radio\" name=\"next_page\" value=1 checked>Update Personal Data<br>";
     } else {
         echo "<input type=\"radio\" name=\"next_page\" value=1>Update Personal Data<br>";

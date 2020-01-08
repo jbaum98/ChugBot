@@ -1,12 +1,14 @@
 <?php
     session_start();
-    include_once 'addEdit.php';
-    include_once 'formItem.php';
+    require_once 'addEdit.php';
+    require_once 'formItem.php';
     bounceToLogin();
 
-    $addGroupPage = new AddPage("Add Group",
-                                "Please enter your group information",
-                                "groups", "group_id");
+    $addGroupPage = new AddPage(
+        "Add Group",
+        "Please enter your group information",
+        "groups", "group_id"
+    );
     $addGroupPage->addColumn("name");
     $addGroupPage->setActiveEdotFilterBy("group");
     $secondParagraph = <<<EOM
@@ -16,7 +18,7 @@ EOM;
     $addGroupPage->addSecondParagraph($secondParagraph);
     $addGroupPage->handleSubmit();
     
-    $nameField = new FormItemSingleTextField("Group Name", TRUE, "name", 0);
+    $nameField = new FormItemSingleTextField("Group Name", true, "name", 0);
     $nameField->setInputType("text");
     $nameField->setInputClass("element text medium");
     $nameField->setInputMaxLength(255);
@@ -25,11 +27,11 @@ EOM;
     $nameField->setGuideText("Choose a group name (e.g., aleph or bet)");                                             
     $addGroupPage->addFormItem($nameField);
     
-    $edahChooser = new FormItemInstanceChooser("Edot", FALSE, "edot_for_group", 1);
+    $edahChooser = new FormItemInstanceChooser("Edot", false, "edot_for_group", 1);
     $edahChooser->setId2Name($addGroupPage->activeEdotFilterId2Name);
     $edahChooser->setActiveIdHash($addGroupPage->activeEdotHash);
     $edahChooser->setGuideText("Choose the edot for this group (you can do this later if you are not sure now)");
     $addGroupPage->addFormItem($edahChooser);
 
     $addGroupPage->renderForm();
-?>
+    ?>

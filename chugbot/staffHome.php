@@ -1,35 +1,39 @@
 <?php
     session_start();
-    include_once 'dbConn.php';
-    include_once 'functions.php';
+    require_once 'dbConn.php';
+    require_once 'functions.php';
     bounceToLogin();
     
     // Check for a query string that signals a message.
     $parts = explode("&", $_SERVER['QUERY_STRING']);
-    $message = NULL;
-    foreach ($parts as $part) {
-        $cparts = explode("=", $part);
-        if (count($cparts) != 2) {
-            continue;
-        }
-        if ($cparts[0] == "update" &&
-            $cparts[1] == "pw") {
-            $message = "<font color=\"green\">Admin password updated!</font>";
-            break;
-        } else if ($cparts[0] == "update" &&
-                   $cparts[1] == "as") {
-            $message = "<font color=\"green\">Admin settings updated!</font>";
-            break;
-        } else if ($cparts[0] == "update" &&
-                   $cparts[1] == "ex") {
-            $message = "<font color=\"green\">De-duplication matrix updated!</font>";
-            break;
-        } else if ($cparts[0] == "error" &&
-                   $cparts[1] == "ex") {
-            $message = "<font color=\"red\">Error updating de-duplication matrix.</font> Please try again, or escalate to an administrator.";
-            break;
-        }
+    $message = null;
+foreach ($parts as $part) {
+    $cparts = explode("=", $part);
+    if (count($cparts) != 2) {
+        continue;
     }
+    if ($cparts[0] == "update" 
+        && $cparts[1] == "pw"
+    ) {
+        $message = "<font color=\"green\">Admin password updated!</font>";
+        break;
+    } else if ($cparts[0] == "update" 
+        && $cparts[1] == "as"
+    ) {
+        $message = "<font color=\"green\">Admin settings updated!</font>";
+        break;
+    } else if ($cparts[0] == "update" 
+        && $cparts[1] == "ex"
+    ) {
+        $message = "<font color=\"green\">De-duplication matrix updated!</font>";
+        break;
+    } else if ($cparts[0] == "error" 
+        && $cparts[1] == "ex"
+    ) {
+        $message = "<font color=\"red\">Error updating de-duplication matrix.</font> Please try again, or escalate to an administrator.";
+        break;
+    }
+}
 
     $matrixUrl = urlIfy("exclusionMatrix.html");
     $advancedUrl = urlIfy("advanced.php");
@@ -45,40 +49,52 @@
     $chugId2Name = array();
     $bunkId2Name = array();
     
-    fillId2Name(NULL, $chugId2Name, $dbErr,
-                "chug_id", "chugim", "group_id",
-                "groups");
-    fillId2Name(NULL, $sessionId2Name, $dbErr,
-                "session_id", "sessions");
-    fillId2Name(NULL, $blockId2Name, $dbErr,
-                "block_id", "blocks");
-    fillId2Name(NULL, $groupId2Name, $dbErr,
-                "group_id", "groups");
-    fillId2Name(NULL, $edahId2Name, $dbErr,
-                "edah_id", "edot");
-    fillId2Name(NULL, $bunkId2Name, $dbErr,
-                "bunk_id", "bunks");
+    fillId2Name(
+        null, $chugId2Name, $dbErr,
+        "chug_id", "chugim", "group_id",
+        "groups"
+    );
+    fillId2Name(
+        null, $sessionId2Name, $dbErr,
+        "session_id", "sessions"
+    );
+    fillId2Name(
+        null, $blockId2Name, $dbErr,
+        "block_id", "blocks"
+    );
+    fillId2Name(
+        null, $groupId2Name, $dbErr,
+        "group_id", "groups"
+    );
+    fillId2Name(
+        null, $edahId2Name, $dbErr,
+        "edah_id", "edot"
+    );
+    fillId2Name(
+        null, $bunkId2Name, $dbErr,
+        "bunk_id", "bunks"
+    );
     ?>
 
 <?php
     echo headerText("Staff Home");
     
-    $errText = genFatalErrorReport(array($dbErr), TRUE);
-    if (! is_null($errText)) {
-        echo $errText;
-    }
-    ?>
+    $errText = genFatalErrorReport(array($dbErr), true);
+if (! is_null($errText)) {
+    echo $errText;
+}
+?>
 
 <?php
-    if ($message) {
-        $messageText = <<<EOM
+if ($message) {
+    $messageText = <<<EOM
 <div class="container centered_container">
 <h2>$message</h2>
 </div>
 EOM;
-        echo $messageText;
-    }
-    ?>
+    echo $messageText;
+}
+?>
 
 <div class="centered_container container-fluid">
 <h2>Camp Staff Control Panel</h2>
@@ -142,16 +158,18 @@ will be created and then displayed.</p>
 <div id="edah_checkbox">
 <?php
     echo genCheckBox($edahId2Name, array(), "edah_ids");
-    ?>
+?>
 </div><p class="guidelines" id="guide_1"><small>Choose One or Two Edot.</small></p>
 </li>
 <li>
 <label class="description" for="group" id="group_desc">Group (choose one or more)</label>
 <div id="group_checkbox">
 <?php
-    echo genConstrainedCheckBoxScript($groupId2Name, "group_ids",
-                                      "group_checkbox", "edah_checkbox",
-                                      "group_desc");
+    echo genConstrainedCheckBoxScript(
+        $groupId2Name, "group_ids",
+        "group_checkbox", "edah_checkbox",
+        "group_desc"
+    );
     ?>
 </div><p class="guidelines" id="guide_2"><small>Select groups to level. Groups
 shown here are the ones common to all selected edot.</small></p>
@@ -162,7 +180,7 @@ shown here are the ones common to all selected edot.</small></p>
 <select class="form-control" id="block" name="block">
 <?php
     echo genPickList($blockId2Name, array(), "block");
-    ?>
+?>
 </select>
 </div><p class="guidelines" id="guide_3"><small>Choose a Block.</small></p>
 </li>

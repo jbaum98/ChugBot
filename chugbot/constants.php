@@ -1,5 +1,5 @@
 <?php
-    define("DEBUG", FALSE);
+    define("DEBUG", false);
 
     define("MAX_SIZE_NUM", 10000);
     define("MIN_SIZE_NUM", -1);
